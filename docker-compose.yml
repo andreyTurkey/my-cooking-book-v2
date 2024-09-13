@@ -1,0 +1,38 @@
+version: '3.1'
+services:
+  my_cooking:
+    build: .
+    image: my-cooking-book
+    container_name: my-cooking-book
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+    environment:
+      - Stat_URL=jdbc:postgresql://my-cooking-db:5433/my_cooking_book
+      - Stat_USER=postgres
+      - Stat_PASSWORD=root
+    volumes:
+      - photo_volume:/photo
+      - mail_properties:/properties
+
+  db:
+    image: postgres:14-alpine
+    build:
+      context: ./
+
+    container_name: my-cooking-db
+    ports:
+      - "6542:5433"
+    command: -p 5433
+    environment:
+      - POSTGRES_DB=my_cooking_book
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+    volumes:
+      - myapp:/var/lib/postgresql
+
+volumes:
+  myapp:
+  photo_volume:
+  mail_properties:
